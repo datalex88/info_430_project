@@ -93,3 +93,8 @@ CREATE TABLE [dbo].[tblEQUIPMENT_TYPE]
     [EquipmentTypeDesc] NVARCHAR(50) NULL
 );
 GO
+
+-- Add foreign Key Constraints
+ALTER TABLE tblVENDOR
+ADD FOREIGN KEY (VendorTypeID) REFERENCES tblVENDOR_TYPE(VendorTypeID)
+GO

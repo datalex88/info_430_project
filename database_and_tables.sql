@@ -94,7 +94,67 @@ CREATE TABLE [dbo].[tblEQUIPMENT_TYPE]
 );
 GO
 
+CREATE TABLE [dbo].[tblPERFORMER_TYPE]
+(
+    [PerformerTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [PerformerTypeName] NVARCHAR(50) NOT NULL,
+    [PerformerTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblPERFORMER]
+(
+    [PerformerID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [PerformerName]   NVARCHAR(50) NOT NULL,
+    [PerformerTypeID] INT NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblMERCH_TYPE]
+(
+    [MerchTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [MerchTypeName] NVARCHAR(50) NOT NULL,
+    [MerchTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblPRODUCT_TYPE]
+(
+    [ProductTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [ProductTypeName] NVARCHAR(50) NOT NULL,
+    [ProductTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblMERCH]
+(
+    [MerchID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [MerchName]   NVARCHAR(50) NOT NULL,
+    [MerchQuantity]   INT NOT NULL,
+    [MerchPrice]   MONEY NOT NULL,
+    [MerchTypeID] INT NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblCONTACT]
+(
+    [ContactID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [ContactName]   NVARCHAR(50) NOT NULL,
+    [ContactPhone]   INT NOT NULL,
+    [ContactEmail] NVARCHAR(50) NULL
+);
+GO
+
 -- Add foreign Key Constraints
 ALTER TABLE tblVENDOR
 ADD FOREIGN KEY (VendorTypeID) REFERENCES tblVENDOR_TYPE(VendorTypeID)
+GO
+
+
+ALTER TABLE tblPERFORMER
+ADD FOREIGN KEY (PerformerTypeID) REFERENCES tblPERFORMER_TYPE(PerformerTypeID)
+GO
+
+ALTER TABLE tblMERCH
+ADD FOREIGN KEY (MerchTypeID) REFERENCES tblMERCH_TYPE(MerchTypeID)
 GO

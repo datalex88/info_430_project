@@ -69,6 +69,23 @@ CREATE TABLE [dbo].[tblVENUE_CONTACT]
 );
 GO
 
+CREATE TABLE [dbo].[tblPRODUCT_TYPE]
+(
+    [ProductTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [ProductTypeName] NVARCHAR(50) NOT NULL,
+    [ProductTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblProduct]
+(
+    [ProductID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [ProductTypeID] INT NOT NULL,
+    [ProductName] NVARCHAR(50) NOT NULL,
+    [ProductDesc] NVARCHAR(50) NULL
+);
+GO
+
 CREATE TABLE [dbo].[tblBOOTH]
 (
     [BoothID]       INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
@@ -110,19 +127,78 @@ CREATE TABLE [dbo].[tblPERFORMER]
 );
 GO
 
-CREATE TABLE [dbo].[tblMERCH_TYPE]
+CREATE TABLE [dbo].[tblMEMBER]
 (
-    [MerchTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [MerchTypeName] NVARCHAR(50) NOT NULL,
-    [MerchTypeDesc] NVARCHAR(50) NULL
+    [MemberID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [MemberFName]   NVARCHAR(50) NOT NULL,
+	[MemberLName]   NVARCHAR(50) NOT NULL,
+	[MemberStreet]   NVARCHAR(50) NOT NULL,
+	[MemberCity]   NVARCHAR(20) NOT NULL,
+	[MemberState]   NVARCHAR(5) NOT NULL,
+	[MemberEmail]   NVARCHAR(50) NOT NULL,
+	[MemberPhone]   NUMERIC(10,5) NOT NULL
 );
 GO
 
-CREATE TABLE [dbo].[tblPRODUCT_TYPE]
+CREATE TABLE [dbo].[tblPERFORMANCE_MEMBER]
 (
-    [ProductTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [ProductTypeName] NVARCHAR(50) NOT NULL,
-    [ProductTypeDesc] NVARCHAR(50) NULL
+    [PerformanceMemberID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [MemberID] INT NOT NULL,
+    [PerformerID] INT NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblEVENT_TYPE]
+(
+    [EventTypeID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [EventTypeName] NVARCHAR(50) NOT NULL,
+    [EventTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblEVENT]
+(
+    [EventID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [EventTypeID] INT NOT NULL,
+	[PerformerID] INT NOT NULL,
+    [EventName] NVARCHAR(50) NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblVENUE_EVENT]
+(
+    [VenueEventID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [VenueID] INT NOT NULL,
+    [EventID] INT NOT NULL,
+	[VenueEventStartTime] TIME NOT NULL,
+	[VenueEventEndTime] TIME NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblTICKET_TYPE]
+(
+    [TicketTypeID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [TicketTypeName] NVARCHAR(50) NOT NULL,
+    [TicketTypeDesc] NVARCHAR(50) NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblTICKET]
+(
+    [TicketID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [TicketTypeID] INT NOT NULL,
+	[VenueEventID] INT NOT NULL,
+    [TicketPrice] MONEY NOT NULL,
+	[TicketSeatNumber] NVARCHAR(5),
+	[PurchaseDate] DATE
+);
+GO
+
+CREATE TABLE [dbo].[tblMERCH_TYPE]
+(
+    [MerchTypeID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [MerchTypeName] NVARCHAR(50) NOT NULL,
+    [MerchTypeDesc] NVARCHAR(50) NULL
 );
 GO
 

@@ -226,11 +226,30 @@ ALTER TABLE tblVENDOR
 ADD FOREIGN KEY (VendorTypeID) REFERENCES tblVENDOR_TYPE(VendorTypeID)
 GO
 
-
 ALTER TABLE tblPERFORMER
 ADD FOREIGN KEY (PerformerTypeID) REFERENCES tblPERFORMER_TYPE(PerformerTypeID)
 GO
 
 ALTER TABLE tblMERCH
 ADD FOREIGN KEY (MerchTypeID) REFERENCES tblMERCH_TYPE(MerchTypeID)
+GO
+
+ALTER TABLE tblPerformance_Member
+ADD FOREIGN KEY (PerformerID) REFERENCES tblPerformer(PerformerID), FOREIGN KEY (MemberID) REFERENCES tblMember(MemberID)
+GO
+
+ALTER TABLE tblTicket
+ADD FOREIGN KEY (TicketTypeID) REFERENCES tblTicketType(TicketTypeID), FOREIGN KEY (VenueEventID) REFERENCES tblVenue_Event(VenueEventID)
+GO
+
+ALTER TABLE tblVenue_Event
+ADD FOREIGN KEY (VenueID) REFERENCES tblVenue(VenueID), FOREIGN KEY (EventID) REFERENCES tblEvent(EventID)
+GO
+
+ALTER TABLE tblEvent
+ADD FOREIGN KEY (EventTypeID) REFERENCES tblEvent_Type(EventTypeID), FOREIGN KEY (PerformerID) REFERENCES tblPerformer(PerformerID)
+GO
+
+ALTER TABLE tblProduct
+ADD FOREIGN KEY (ProductTypeID) REFERENCES tblProduct_Type(ProductTypeID)
 GO

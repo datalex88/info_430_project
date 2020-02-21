@@ -142,7 +142,7 @@ GO
 
 CREATE TABLE [dbo].[tblPERFORMANCE_MEMBER]
 (
-    [PerformanceMemberID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [PerformanceMemberID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
     [MemberID] INT NOT NULL,
     [PerformerID] INT NOT NULL
 );
@@ -221,6 +221,20 @@ CREATE TABLE [dbo].[tblCONTACT]
 );
 GO
 
+CREATE TABLE [dbo].[tblORDER]
+(
+    [OrderID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [OrderDate]   DATE NOT NULL
+);
+GO
+
+CREATE TABLE [dbo].[tblLINEITEM]
+(
+    [LineItemID]  INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [PriceExtended] MONEY NOT NULL
+);
+GO
+
 -- Add foreign Key Constraints
 ALTER TABLE tblVENDOR
 ADD FOREIGN KEY (VendorTypeID) REFERENCES tblVENDOR_TYPE(VendorTypeID)
@@ -252,4 +266,13 @@ GO
 
 ALTER TABLE tblProduct
 ADD FOREIGN KEY (ProductTypeID) REFERENCES tblProduct_Type(ProductTypeID)
+GO
+
+ALTER TABLE tblORDER
+ADD FOREIGN KEY (PerformerID) REFERENCES tblPERFORMER(PerformerID)
+GO
+
+ALTER TABLE tblLINEITEM
+ADD FOREIGN KEY (MerchID) REFERENCES tblMERCH(MerchID), 
+    FOREIGN KEY (OrderID) REFERENCES tblORDER(OrderID)
 GO

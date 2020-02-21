@@ -231,6 +231,8 @@ GO
 CREATE TABLE [dbo].[tblLINEITEM]
 (
     [LineItemID]  INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [Quantity] INT NOT NULL, 
+    [LineItemPrice] MONEY NOT NULL,
     [PriceExtended] MONEY NOT NULL
 );
 GO

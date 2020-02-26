@@ -224,7 +224,7 @@ GO
 CREATE TABLE [dbo].[tblORDER]
 (
     [OrderID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [OrderDate]   DATE NOT NULL
+    [OrderDate]   DATETIME NOT NULL
 );
 GO
 

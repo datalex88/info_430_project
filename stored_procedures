@@ -1,0 +1,53 @@
+USE MASS_Entertainment_database
+GO
+
+-- procedure to insert into line item and order at the same time 
+CREATE PROCEDURE uspPopulateOrder_LineItem
+@MerchName NVARCHAR(50),
+@PerfName NVARCHAR(50),
+@ODate DATETIME,
+@Quant INT, 
+@LIPrice MONEY
+AS
+
+DECLARE @Merch_ID INT, @Performer_ID INT, @Order_ID INT,  @LI_ID INT
+
+SET @Merch_ID = (SELECT MerchID
+              FROM tblMerch
+              WHERE MerchName = @MerchName)
+
+IF @Merch_ID IS NULL
+    BEGIN
+        PRINT 'Merchandise ID must have a value; the variable is NULL - check merchant data'
+        RAISERROR ('@Merch_ID cannot be NULL',11,1)
+    RETURN
+END
+
+SET @Performer_ID = (SELECT PerformerID
+              FROM tblPerformer
+              WHERE PerformerName = @PerfName)
+
+IF @Performer_ID IS NULL
+    BEGIN
+        PRINT 'Performer ID must have a value; the variable is NULL - check performer data'
+        RAISERROR ('@Performer_ID cannot be NULL',11,1)
+    RETURN
+END
+
+BEGIN TRAN T1
+    INSERT INTO tblOrder (PerformerID, OrderDate)
+    VALUES (@Performer_ID, @ODate)
+    SET @Order_ID = (SELECT Scope_Identity())
+    IF @Order_ID IS NULL
+        ROLLBACK TRAN T1
+    ELSE
+        INSERT INTO tblLINEITEM (MerchID, OrderID, LineItemPrice, Quantity, PriceExtended)
+        VALUES (@Merch_ID, @Order_ID, @LIPrice, @Quant, (@LIPrice * @Quant))
+    IF @@ERROR <> 0
+        BEGIN
+            PRINT 'Failing transaction'
+            ROLLBACK TRAN T1
+        END
+    ELSE
+        COMMIT TRAN T1
+GO

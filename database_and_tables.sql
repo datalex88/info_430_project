@@ -35,9 +35,11 @@ GO
 
 CREATE TABLE [dbo].[tblVENUE_VENDOR]
 (
-    [VenueVendorID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [VenueID]       INT NOT NULL,
-    [VendorID]      INT NOT NULL
+    [VenueVendorID] INT  IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
+    [VenueID]       INT  NOT NULL,
+    [VendorID]      INT  NOT NULL,
+    [ContractStart] DATE NOT NULL,
+    [ContractEnd]   DATE NOT NULL
 );
 GO
 
@@ -102,9 +104,11 @@ CREATE TABLE [dbo].[tblEQUIPMENT]
 (
     [EquipmentID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
     [EquipmentName]   NVARCHAR(50)       NOT NULL,
-    [EquipmentTypeID] INT                NOT NULL
+    [EquipmentTypeID] INT                NOT NULL,
+    [PerformerID]     INT                NOT NULL
 );
 GO
+
 
 CREATE TABLE [dbo].[tblEQUIPMENT_TYPE]
 (
@@ -142,20 +146,12 @@ CREATE TABLE [dbo].[tblMEMBER]
 	[MemberPhone]  NVARCHAR(10)       NOT NULL
 );
 GO
-ALTER TABLE tblMEMBER
-ALTER COLUMN MemberPhone NVARCHAR(10);
-GO
+
 CREATE TABLE [dbo].[tblPERFORMANCE_MEMBER]
 (
-<<<<<<< HEAD
-    [PerformanceMemberID] INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [MemberID]            INT NOT NULL,
-    [PerformerID]         INT NOT NULL
-=======
     [PerformanceMemberID]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
     [MemberID] INT NOT NULL,
     [PerformerID] INT NOT NULL
->>>>>>> 816437e68d3bfbb73cef01a05a5b0ac347c1e79a
 );
 GO
 
@@ -231,8 +227,6 @@ CREATE TABLE [dbo].[tblCONTACT]
     [ContactEmail] NVARCHAR(50)       NULL
 );
 GO
-<<<<<<< HEAD
-=======
 
 CREATE TABLE [dbo].[tblORDER]
 (
@@ -250,7 +244,14 @@ CREATE TABLE [dbo].[tblLINEITEM]
 );
 GO
 
->>>>>>> 816437e68d3bfbb73cef01a05a5b0ac347c1e79a
+CREATE TABLE [dbo].[tblLOCATION]
+(
+    [LocationID] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [LocationName] NVARCHAR(50)    NOT NULL,
+    [LocationDesc] NVARCHAR(500)   NULL
+);
+GO
+
 -- Add foreign Key Constraints
 ALTER TABLE tblVENDOR
 ADD FOREIGN KEY (VendorTypeID) REFERENCES tblVENDOR_TYPE(VendorTypeID)
@@ -284,8 +285,6 @@ ALTER TABLE tblPRODUCT
 ADD FOREIGN KEY (ProductTypeID) REFERENCES tblPRODUCT_TYPE(ProductTypeID)
 GO
 
-<<<<<<< HEAD
-=======
 ALTER TABLE tblProduct
 ADD FOREIGN KEY (ProductTypeID) REFERENCES tblProduct_Type(ProductTypeID)
 GO
@@ -298,4 +297,10 @@ ALTER TABLE tblLINEITEM
 ADD FOREIGN KEY (MerchID) REFERENCES tblMERCH(MerchID), 
     FOREIGN KEY (OrderID) REFERENCES tblORDER(OrderID)
 GO
->>>>>>> 816437e68d3bfbb73cef01a05a5b0ac347c1e79a
+
+ALTER TABLE tblBOOTH
+ADD FOREIGN KEY (LocationID) REFERENCES tblLOCATION(LocationID)
+
+ALTER TABLE tblEQUIPMENT
+ADD FOREIGN KEY (PerformerID) REFERENCES tblPERFORMER(PerformerID),
+    FOREIGN KEY (EquipmentTypeID) REFERENCES tblEQUIPMENT_TYPE(EquipmentTypeID)

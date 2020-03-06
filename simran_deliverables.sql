@@ -105,3 +105,16 @@ GO
 INSERT INTO tblPERFORMER
 SELECT * FROM performer_tempCSV
 GO
+
+-- Merchandise sales per performer, greater than 10 items
+CREATE VIEW v_MerchPerPerformer AS
+SELECT P.PerformerName, SUM(LI.PriceExtended) AS TotalMerchSales
+FROM tblPERFORMER P
+JOIN tblOrder O ON P.PerformerID = O.PerformerID
+JOIN tblLineItem LI ON O.OrderID = LI.OrderID
+GROUP BY P.PerformerName
+HAVING COUNT(LI.Quantity) > 10
+GO
+
+SELECT * FROM v_MerchPerPerformer
+ORDER BY TotalMerchSales DESC

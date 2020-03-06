@@ -88,3 +88,20 @@ ALTER TABLE tblLINEITEM
 ADD ExtendedPrice AS (dbo.fn_calcExtendedPrice(LineItemID))
 GO
 
+-- populate performer & performer_type tables
+-- Inserting new values into tblPERFORMER_TYPE
+INSERT INTO tblPERFORMER_TYPE(PerformerTypeName, PerformerTypeDesc)
+VALUES
+    ('Musical Band', NULL),
+    ('Pianist', NULL),
+    ('Guitarist', NULL),
+    ('Opera', NULL),
+    ('Singer', NULL),
+    ('Orchestra', NULL), 
+    ('A cappella', NULL)
+GO
+
+-- Adding data from temp table to tblPERFORMER
+INSERT INTO tblPERFORMER
+SELECT * FROM performer_tempCSV
+GO

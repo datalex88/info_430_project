@@ -231,7 +231,8 @@ GO
 CREATE TABLE [dbo].[tblORDER]
 (
     [OrderID]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
-    [OrderDate]   DATETIME NOT NULL
+    [OrderDate]   DATETIME NOT NULL,
+    [PerformerID] INT NOT NULL
 );
 GO
 
@@ -240,9 +241,12 @@ CREATE TABLE [dbo].[tblLINEITEM]
     [LineItemID]  INT IDENTITY (1,1) NOT NULL PRIMARY KEY, -- Primary Key column
     [Quantity] INT NOT NULL, 
     [LineItemPrice] MONEY NOT NULL,
-    [PriceExtended] MONEY NOT NULL
+    [PriceExtended] MONEY NOT NULL,
+    [MerchID] INT NOT NULL, 
+    [OrderID] INT NOT NULL
 );
 GO
+
 
 CREATE TABLE [dbo].[tblLOCATION]
 (

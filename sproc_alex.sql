@@ -42,6 +42,7 @@ CREATE PROCEDURE usp_getVenueID
 AS
 SET @venueID = (SELECT VenueID FROM tblVENUE WHERE VenueName = @venueName)
 GO
+
 -- usp_newEvent
 -- *GetPerformerID
 -- *GetEventTypeID
@@ -79,14 +80,44 @@ BEGIN
     COMMIT TRAN T1
 END
 GO
+
 -- uspNewVenueEvent
 -- *GetEventID
 -- *GetVenueID
+CREATE PROCEDURE usp_newVenueEvent
+@venueName NVARCHAR(50),
+@newEventName NVARCHAR(50),
+@start     DATETIME,
+@end       DATETIME
+AS
+BEGIN
+    DECLARE @E_ID INT, @V_ID INT
 
+    EXEC usp_getEventID
+    @eventName = @newEventName,
+    @eventID = @E_ID OUTPUT
+    IF @E_ID IS NULL
+    BEGIN
+        RAISERROR('Event name is NULL man!', 11, 1)
+        RETURN
+    END
+
+    SET @V_ID = (SELECT VenueID FROM tblVENUE WHERE VenueName = @venueName)
+    IF @V_ID IS NULL
+    BEGIN
+        RAISERROR('Venue name is NULL man!', 11, 1)
+        RETURN
+    END
+
+    BEGIN TRAN T1
+    INSERT INTO tblVENUE_EVENT(VenueID, EventID, VenueEventStartTime, VenueEventEndTime)
+    VALUES(@V_ID, @E_ID, @start, @end)
+    COMMIT TRAN T1
+END
+GO
 
 /*
 Needed Business Rules:
-- Nobody under 21 can by a ticket
 - Venue_Vendor duration cant be under 1 year
 */
 
@@ -106,12 +137,49 @@ INSERT INTO tblVENUE
 SELECT * FROM venue_dataCSV
 GO
 
-INSERT INTO [dbo].[TableName]
-(
- [ColumnName1], [ColumnName2], [ColumnName3]
-)
-VALUES
-(
- ColumnValue1, ColumnValue2, ColumnValue3
-)
+-- Computed Column: Concert duration
+CREATE FUNCTION fn_durationOfConcert(@PKID INT) 
+RETURNS INT
+AS
+    BEGIN
+        DECLARE @RET INT = (
+            SELECT (DATEDIFF(MINUTE, VenueEventStartTime, VenueEventEndTime))
+            FROM tblVENUE_EVENT
+            WHERE VenueEventID = @PKID
+                            )
+        RETURN @RET
+    END
 GO
+
+ALTER TABLE tblVENUE_EVENT 
+ADD Duration
+AS (dbo.fn_durationOfConcert(VenueEventID))
+GO
+
+CREATE FUNCTION NoGuitarsInCafes() 
+RETURNS INT 
+AS 
+BEGIN    
+    DECLARE @RET INT = 0    
+    IF EXISTS (
+        SELECT *
+        FROM tblEQUIPMENT_TYPE ET 
+        JOIN tblEQUIPMENT       E ON ET.EquipmentTypeID = E.EquipmentTypeID
+        JOIN tblPERFORMER       P ON E.PerformerID      = P.PerformerID
+        JOIN tblEVENT          EV ON P.PerformerID      = EV.PerformerID
+        JOIN tblVENUE_EVENT    VE ON EV.EventID         = VE.EventID
+        JOIN tblVENUE           V ON VE.VenueID         = V.VenueID
+        JOIN tblVENUE_TYPE     VT ON V.VenueTypeID      = VT.VenueTypeID
+        WHERE VT.VenueTypeName   LIKE 'Cafe'
+        AND ET.EquipmentTypeName LIKE 'Guitar'             
+    )
+    BEGIN           
+        SET @RET = 1    
+    END 
+    RETURN @RET 
+END 
+GO 
+
+ALTER TABLE tblVENUE_EVENT   
+ADD CONSTRAINT CK_NoGuitarsInCafes 
+CHECK (dbo.NoGuitarsInCafes() = 0)

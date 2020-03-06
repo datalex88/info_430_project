@@ -85,6 +85,6 @@ END
 GO
 
 ALTER TABLE tblLINEITEM
-ADD ExtendedPrice AS (fn_calcExtendedPrice(LineItemID))
+ADD ExtendedPrice AS (dbo.fn_calcExtendedPrice(LineItemID))
 GO
 

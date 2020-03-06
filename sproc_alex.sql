@@ -183,3 +183,17 @@ GO
 ALTER TABLE tblVENUE_EVENT   
 ADD CONSTRAINT CK_NoGuitarsInCafes 
 CHECK (dbo.NoGuitarsInCafes() = 0)
+GO
+
+-- Number of Events held at each venue, greater than 10
+CREATE VIEW v_EventsPerVenue AS
+SELECT V.VenueName, COUNT(E.EventID) AS NumberOfEvents
+FROM tblVENUE V 
+JOIN tblVENUE_EVENT VE ON V.VenueID = VE.VenueID
+JOIN tblEVENT E ON VE.EventID = E.EventID
+GROUP BY V.VenueName
+HAVING COUNT(E.EventID) > 10
+GO
+
+SELECT * FROM v_EventsPerVenue
+ORDER BY NumberOfEvents DESC

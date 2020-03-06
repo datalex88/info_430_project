@@ -51,3 +51,40 @@ BEGIN TRAN T1
     ELSE
         COMMIT TRAN T1
 GO
+
+-- business rule 
+CREATE FUNCTION fn_VenueEndStartTime()
+RETURNS INT
+AS
+BEGIN
+ 
+    DECLARE @RET INT = 0
+    IF EXISTS (SELECT * FROM tblVenue_Event
+               WHERE VenueEventEndTime < VenueEventStartTime)
+        BEGIN
+            SET @RET =1
+        END
+    RETURN @RET
+END
+GO
+ 
+ALTER TABLE tblVenue_Event
+ADD CONSTRAINT CK_VenueEndStartTime
+CHECK (dbo.fn_VenueEndStartTime() = 0)
+GO
+-- calculated column 
+CREATE FUNCTION fn_calcExtendedPrice(@PK_LI INT)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @Ret INT = (SELECT (LineItemPrice * Quantity)
+		FROM tblLINEITEM
+		WHERE LineItemID = @PK_LI)
+RETURN @Ret
+END
+GO
+
+ALTER TABLE tblLINEITEM
+ADD ExtendedPrice AS (fn_calcExtendedPrice(LineItemID))
+GO
+

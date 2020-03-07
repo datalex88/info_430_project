@@ -209,3 +209,34 @@ GO
 ALTER TABLE tblEvent
 ADD TotalNumTicketsSold AS (fn_CalcTotalTicketsConcert (EventID))
 GO
+
+
+
+--Views
+
+-- Most Popular Venue by Events Held
+CREATE VIEW v_MostPopularVenue AS
+SELECT V.VenueName, COUNT(E.EventID) AS NumberOfEvents
+FROM tblVENUE V
+JOIN tblVENUE_EVENT VE ON V.VenueID = VE.VenueID
+JOIN tblEVENT E ON VE.EventID = E.EventID
+GROUP BY VenueName
+HAVING COUNT(E.EventID) > 1
+GO
+SELECT Top 1 With Ties * FROM v_MostPopularVenue
+ORDER BY NumberOfEvents DESC
+
+
+
+-- Number of Venues Performed At
+CREATE VIEW v_NumberVenuesPerformed AS
+SELECT P.PerformerName, COUNT(V.VenueID) AS NumberOfVenuesPerformed
+FROM tblVenue V
+JOIN tblVENUE_EVENT VE ON V.VenueID = VE.VenueID
+JOIN tblEVENT E ON VE.EventID = E.EventID
+JOIN tblPERFORMER P ON E.PerformerID = P.PerformerID
+GROUP BY PerformerName
+HAVING COUNT(PerformerName) > 1
+GO
+SELECT Top 1 With Ties * FROM v_NumberVenuesPerformed
+ORDER BY NumberOfVenuesPerformed DESC

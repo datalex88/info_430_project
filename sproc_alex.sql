@@ -161,7 +161,8 @@ RETURNS INT
 AS 
 BEGIN    
     DECLARE @RET INT = 0    
-    IF EXISTS (
+    IF EXISTS 
+    (
         SELECT *
         FROM tblEQUIPMENT_TYPE ET 
         JOIN tblEQUIPMENT       E ON ET.EquipmentTypeID = E.EquipmentTypeID
@@ -188,12 +189,20 @@ GO
 -- Number of Events held at each venue, greater than 10
 CREATE VIEW v_EventsPerVenue AS
 SELECT V.VenueName, COUNT(E.EventID) AS NumberOfEvents
-FROM tblVENUE V 
-JOIN tblVENUE_EVENT VE ON V.VenueID = VE.VenueID
-JOIN tblEVENT E ON VE.EventID = E.EventID
+FROM tblVENUE        V 
+JOIN tblVENUE_EVENT VE ON V.VenueID  = VE.VenueID
+JOIN tblEVENT        E ON VE.EventID = E.EventID
 GROUP BY V.VenueName
 HAVING COUNT(E.EventID) > 10
 GO
 
 SELECT * FROM v_EventsPerVenue
 ORDER BY NumberOfEvents DESC
+
+INSERT INTO tblTICKET_TYPE(TicketTypeName, TicketTypeDesc)
+VALUES ('VIP', NULL),
+('Standing Room', NULL),
+('Sitting', NULL),
+('Back Stage Pass', NULL)
+
+SELECT * FROM tblEVENT_TYPE

@@ -205,4 +205,76 @@ VALUES ('VIP', NULL),
 ('Sitting', NULL),
 ('Back Stage Pass', NULL)
 
-SELECT * FROM tblEVENT_TYPE
+SELECT * FROM tblTICKET_TYPE
+
+DELETE FROM tblTICKET_TYPE WHERE TicketTypeID = 8
+GO
+-- creating orders
+
+CREATE PROCEDURE usp_getNewLineItem
+@merchID INT,
+@quant INT,
+@price money,
+@perfID INT,
+@orderDate DATE
+
+AS
+
+INSERT INTO tblORDER(OrderDate, PerformerID)
+VALUES (@orderDate, @perfID)
+
+DECLARE @O_ID INT
+SET @O_ID = SCOPE_IDENTITY()
+
+BEGIN
+DECLARE @RC int = 0;
+BEGIN TRY
+    BEGIN TRAN T1
+    INSERT INTO tblLINEITEM(Quantity, LineItemPrice, PriceExtended, MerchID, OrderID)
+    VALUES(@quant, @price, @price * @quant, @merchID, @O_ID)
+    COMMIT TRAN T1
+    SET @RC = +1;
+END TRY
+BEGIN CATCH
+IF(@@Trancount > 0)
+    ROLLBACK TRAN;
+    PRINT Error_Message();
+    SET @RC = -1;
+END CATCH
+RETURN @RC;
+END
+GO
+
+CREATE PROCEDURE davis_merch_wrapper
+@RUN INT
+AS
+
+DECLARE @PerformerID INT
+DECLARE @date DATE
+DECLARE @prodID INT
+DECLARE @randomStartDate   DATE
+DECLARE @randomEndDate     DATE
+DECLARE @randomQty INT
+DECLARE @money MONEY
+
+WHILE @RUN > 0
+BEGIN
+    SET @randomStartDate = '2011-01-01'
+    SET @randomEndDate   = '2020-01-31'
+    SET @date = (select dateadd(day, 
+                rand(checksum(newid()))*(1+datediff(day, @randomStartDate, @randomEndDate)), 
+                @randomStartDate))
+    SET @PerformerID = 15 --Red Hot Chili Pepers
+    SET @prodID = 1 -- tshirt
+    SET @randomQty = (SELECT FLOOR(RAND()*(10-5)+5))
+    SET @money = (SELECT MerchPrice FROM tblMERCH WHERE MerchID = @prodID)
+
+    EXECUTE usp_getNewLineItem
+    @merchID = @prodID,
+    @quant = @randomQty,
+    @price = @money,
+    @perfID = @PerformerID,
+    @orderDate = @date
+SET @RUN = @RUN -1
+END
+
